@@ -147,7 +147,7 @@ body::before{
   flex-shrink:0
 }
 .app-logo-text{font-family:var(--font-head);font-weight:800;letter-spacing:-.01em;color:var(--accent);display:flex;flex-direction:column;line-height:1.1}
-.app-logo-text .logo-line-top{font-size:.8rem;font-weight:600;color:#fdf4f4;text-transform:uppercase;letter-spacing:.08em}
+.app-logo-text .logo-line-top{font-size:.65rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .app-logo-text .logo-line-bottom{font-size:1.05rem;font-weight:900;color:var(--accent)}
 .app-nav{display:flex;gap:4px;flex:1}
 .nav-btn{
@@ -590,18 +590,113 @@ tbody tr td:first-child{display:flex;align-items:center;gap:10px}
 .login-bottom-img{position:absolute;top:130px;left:50%;transform:translateX(-50%);pointer-events:none;z-index:2}
 .login-bottom-img img{display:block;width:auto;height:auto;max-width:300px}
 
+/* ============================================================
+   RESPONSIVO MOBILE
+   ============================================================ */
+
+/* ---- 680px: tablets pequenos e landscape mobile ---- */
 @media(max-width:680px){
   .auth-card{padding:32px 22px}
-  .app-header{padding:0 16px}
-  .tab-content{padding:16px}
-  .admin-body{padding:16px}
-  .app-nav{gap:2px}
-  .nav-btn{padding:6px 10px;font-size:.76rem}
-  .menu-grid{grid-template-columns:1fr 1fr}
+  .tab-content{padding:14px}
+  .admin-body{padding:14px}
   .info-grid{grid-template-columns:1fr}
   .menu-hero{height:140px}
   .hero-title{font-size:1.4rem}
+
+  /* Header: empilha logo+nav em duas linhas */
+  .app-header{
+    height:auto;
+    flex-wrap:wrap;
+    padding:10px 14px;
+    gap:8px;
+  }
+  .app-logo{flex-shrink:0}
+  .app-logo-text .logo-line-top{font-size:.6rem}
+  .app-logo-text .logo-line-bottom{font-size:.9rem}
+
+  /* Nav ocupa linha inteira abaixo do logo */
+  .app-nav{
+    order:3;
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:2px;
+    padding-bottom:2px;
+  }
+  .app-nav::-webkit-scrollbar{display:none}
+  .nav-btn{padding:6px 10px;font-size:.74rem;white-space:nowrap;flex-shrink:0}
+  .nav-btn svg{display:none}
+
+  /* Sair / Som ficam no canto direito da primeira linha */
+  .btn-logout{order:2;padding:6px 12px;font-size:.76rem;flex-shrink:0}
+  .btn-sound{order:1;padding:5px 10px;font-size:.72rem;flex-shrink:0}
+
+  /* Menu grid: 1 coluna em telas muito pequenas, 2 em médias */
+  .menu-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+
+  /* Cart */
+  .cart-item-row{gap:8px;padding:10px 12px}
+  .cart-item-subtotal{min-width:54px;font-size:.82rem}
+
+  /* Order footer: empilha token abaixo do total */
+  .order-footer{flex-direction:column;align-items:flex-start;gap:10px}
+  .order-token-wrap{align-items:flex-start}
+
+  /* Tabelas: scroll horizontal */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:540px}
+
+  /* Admin order */
+  .admin-order-top{flex-direction:column}
+  .admin-stats{gap:8px}
+  .stat-card{padding:14px 16px;min-width:100px}
+  .stat-num{font-size:1.6rem}
+
+  /* Profile */
+  .profile-card{padding:22px 16px}
+
+  /* Modal */
+  .modal-box{border-radius:16px;max-height:92vh}
+  .modal-header{padding:16px}
+  .modal-body{padding:14px 16px}
 }
+
+/* ---- 480px: smartphones portrait ---- */
+@media(max-width:480px){
+  .menu-grid{grid-template-columns:1fr 1fr}
+  .menu-item:has(.menu-item-img){min-height:180px;padding-top:90px}
+
+  /* Nav: ícones somem, só texto */
+  .nav-btn{font-size:.7rem;padding:5px 8px}
+
+  /* Cart item row */
+  .cart-item-row{flex-wrap:wrap}
+  .cart-item-info{flex:1;min-width:0}
+  .cart-qty-ctrl{flex-shrink:0}
+  .cart-item-subtotal{width:100%;text-align:left;font-size:.8rem}
+
+  /* Dtoken digits */
+  .dtoken-digit{width:42px;height:54px;font-size:1.6rem}
+
+  /* Token digits no pedido */
+  .order-token-digit{width:26px;height:32px;font-size:.88rem}
+
+  /* Admin entregadores form */
+  #atab-entregadores [style*="grid-template-columns:1fr 1fr"]{
+    display:flex!important;flex-direction:column;gap:10px
+  }
+}
+
+/* ---- 400px: smartphones muito pequenos ---- */
+@media(max-width:400px){
+  .menu-grid{grid-template-columns:1fr}
+  .app-logo-text .logo-line-bottom{font-size:.82rem}
+  .nav-btn{font-size:.66rem;padding:5px 7px}
+  .tab-title{font-size:1.1rem}
+  .dtoken-digit{width:36px;height:48px;font-size:1.4rem}
+}
+
 @media(max-width:600px){
   .login-banner,.login-bottom-img{display:none}
   #page-login .auth-card{margin-top:0}

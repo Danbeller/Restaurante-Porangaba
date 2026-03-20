@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Restaurante Porangaba — Pedidos</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── LAYOUT LADO A LADO NA TELA DE LOGIN ── */
+    #page-login{
+      flex-direction:row;
+      align-items:stretch;
+      justify-content:center;
+      gap:0;
+      padding:0;
+      overflow:hidden;
+    }
+
+    /* Coluna esquerda: painel de login */
+    .login-left{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px 36px;
+      width:100%;
+      max-width:480px;
+      flex-shrink:0;
+      z-index:1;
+      position:relative;
+    }
+    #page-login .auth-card{
+      margin-top:0;
+      width:100%;
+      max-width:420px;
+    }
+
+    /* Coluna direita: galeria de pratos */
+    .login-right{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      padding:40px 36px 40px 24px;
+      gap:20px;
+      overflow:hidden;
+      position:relative;
+    }
+    .login-right::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(ellipse at 80% 20%, rgba(220,38,38,0.09) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(251,191,36,0.05) 0%, transparent 50%);
+      pointer-events:none;
+    }
+
+    .food-gallery-heading{
+      font-family:'Playfair Display',serif;
+      font-size:1.6rem;
+      font-weight:900;
+      color:#fdf4f4;
+      letter-spacing:-.02em;
+      line-height:1.2;
+      position:relative;
+    }
+    .food-gallery-heading span{
+      color:#dc2626;
+    }
+    .food-gallery-sub{
+      font-size:.78rem;
+      color:rgba(138,96,96,1);
+      margin-top:6px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    .food-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      grid-template-rows:repeat(2,1fr);
+      gap:12px;
+      flex:1;
+      max-height:420px;
+    }
+    .food-tile{
+      border-radius:16px;
+      overflow:hidden;
+      position:relative;
+      border:1px solid rgba(220,38,38,0.18);
+      box-shadow:0 6px 24px rgba(0,0,0,0.45);
+      cursor:default;
+    }
+    .food-tile img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      filter:brightness(.82) saturate(1.2);
+      transition:filter .35s, transform .35s;
+    }
+    .food-tile:hover img{
+      filter:brightness(1) saturate(1.35);
+      transform:scale(1.05);
+    }
+    .food-tile-label{
+      position:absolute;
+      bottom:0;left:0;right:0;
+      padding:22px 12px 10px;
+      background:linear-gradient(to top, rgba(13,5,5,0.88) 0%, transparent 100%);
+      font-size:.72rem;
+      font-weight:700;
+      color:#fdf4f4;
+      letter-spacing:.03em;
+    }
+    /* Destaque no primeiro tile */
+    .food-tile:first-child{
+      grid-row:span 2;
+    }
+    .food-tile:first-child .food-tile-label{
+      font-size:.82rem;
+    }
+
+    /* Oculta banners antigos que não são mais necessários */
+    .login-banner,
+    .login-bottom-img{
+      display:none !important;
+    }
+
+    /* Responsivo: empilha em telas pequenas */
+    @media(max-width:860px){
+      #page-login{
+        flex-direction:column;
+        align-items:center;
+        padding:24px;
+        overflow-y:auto;
+      }
+      .login-left{
+        padding:0;
+        max-width:100%;
+      }
+      .login-right{
+        display:none;
+      }
+      #page-login .auth-card{
+        margin-top:0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div class="page auth-page" id="page-login">
+
+  <!-- Coluna esquerda: formulário -->
+  <div class="login-left">
+    <div class="auth-card">
+      <div class="auth-logo" id="login-logo" style="cursor:default">
+        <div class="logo-icon">
+          <img src="img/img-1.jpeg" alt="Logo Porangaba" style="width:100%;height:100%;object-fit:cover;border-radius:12px;"/>
+        </div>
+        <div><div class="logo-text">Restaurante Porangaba</div><div class="logo-sub">Peça com sabor</div></div>
+      </div>
+      <h1 class="auth-title">Bem-vindo<br/>de volta</h1>
+      <p class="auth-sub">Entre com seu celular e senha para continuar.</p>
+      <form id="form-login" novalidate>
+        <div class="field"><label>Número de Celular</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><input type="tel" name="phone" class="phone-input" placeholder="(11) 99999-9999" required/></div></div>
+        <div class="field"><label>Senha</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" name="password" placeholder="••••••••" required/></div></div>
+        <button type="submit" id="btn-login" class="btn-primary">Entrar →</button>
+      </form>
+      <div class="auth-footer">Não tem conta? <button class="link" onclick="goToRegister()">Criar conta</button></div>
+    </div>
+  </div>
+
+  <!-- Banner ao fundo, centro superior (mantido no HTML, ocultado via CSS) -->
+  <div class="login-banner">
+    <img src="img/img-1.jpeg" alt="Banner Porangaba" class="login-banner-img"/>
+  </div>
+
+  <!-- Imagem abaixo do painel de login (mantido no HTML, ocultado via CSS) -->
+  <div class="login-bottom-img">
+    <img src="img/img-1.jpeg" alt="Capa Porangaba"/>
+  </div>
+
+  <!-- Coluna direita: galeria de pratos reais -->
+  <div class="login-right">
+    <div>
+      <div class="food-gallery-heading">Sabor que<br/>você <span>merece</span></div>
+      <div class="food-gallery-sub">✨ Destaques do nosso cardápio</div>
+    </div>
+    <div class="food-grid">
+      <div class="food-tile">
+        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80" alt="X-Burguer Artesanal"/>
+        <div class="food-tile-label">X-Burguer Artesanal</div>
+      </div>
+      <div class="food-tile">
+        <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&q=80" alt="Pizza Margherita"/>
+        <div class="food-tile-label">Pizza Margherita</div>
+      </div>
+      <div class="food-tile">
+        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80" alt="Milk-shake"/>
+        <div class="food-tile-label">Milk-shake Gelado</div>
+      </div>
+      <div class="food-tile">
+        <img src="https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=600&q=80" alt="Batata Frita"/>
+        <div class="food-tile-label">Batata Frita Crocante</div>
+      </div>
+      <div class="food-tile">
+        <img src="https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80" alt="Açaí"/>
+        <div class="food-tile-label">Açaí Cremoso</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== REGISTRO ===================== -->
+<div class="page auth-page" id="page-register">
+  <div class="auth-card">
+    <div class="auth-logo"><div class="logo-icon"><img src="img/img-1.jpeg" alt="Logo" style="width:100%;height:100%;object-fit:cover;border-radius:12px;"/></div><div><div class="logo-text">Restaurante Porangaba</div><div class="logo-sub">Novo Cadastro</div></div></div>
+    <h1 class="auth-title">Criar<br/>sua conta</h1>
+    <p class="auth-sub">Preencha os dados para se registrar.</p>
+    <form id="form-register" novalidate>
+      <div class="field"><label>Nome Completo</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input type="text" name="name" placeholder="João da Silva" required/></div></div>
+      <div class="field"><label>Celular</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><input type="tel" name="phone" class="phone-input" placeholder="(11) 99999-9999" required/></div></div>
+      <div class="field"><label>Endereço (opcional)</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg><input type="text" name="address" placeholder="Rua, número, bairro"/></div></div>
+      <div class="field"><label>Senha</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6"/></div></div>
+      <div class="field"><label>Confirmar Senha</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" name="confirm" placeholder="Repita a senha" required/></div></div>
+      <button type="submit" id="btn-register" class="btn-primary">Criar Conta →</button>
+    </form>
+    <div class="auth-footer">Já tem conta? <button class="link" onclick="goToLogin()">Fazer login</button></div>
+  </div>
+</div>
+
+<!-- ===================== LOGIN ADMIN ===================== -->
+<div class="page auth-page" id="page-admin-login">
+  <div class="auth-card">
+    <div class="auth-logo"><div class="logo-icon">🛡️</div><div><div class="logo-text">Administração</div><div class="logo-sub">Acesso Restrito</div></div></div>
+    <h1 class="auth-title">Painel<br/>Admin</h1>
+    <p class="auth-sub">Acesso restrito.</p>
+    <form id="form-admin-login" novalidate>
+      <div class="field"><label>E-mail</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg><input type="text" id="admin-email-field" name="admin-email-field" autocomplete="off" placeholder="seu@email.com" required/></div></div>
+      <div class="field"><label>Senha</label><div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" name="password" placeholder="••••••••" required/></div></div>
+      <button type="submit" id="btn-admin-login" class="btn-primary">Acessar Painel →</button>
+    </form>
+    <div class="auth-footer"><button class="link" onclick="goToLogin()">← Voltar</button></div>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD USUÁRIO ===================== -->
+<div class="page app-page" id="page-dashboard">
+
+  <!-- Header / Nav -->
+  <header class="app-header">
+    <div class="app-logo">
+      <img src="img/img-1.jpeg" alt="Logo" class="app-logo-img"/>
+      <span class="app-logo-text">
+  <span class="logo-line-top">Restaurante</span>
+  <span class="logo-line-bottom">Porangaba</span>
+</span>
+    </div>
+    <nav class="app-nav">
+      <button class="nav-btn active" data-tab="tab-menu" onclick="switchTab(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        Cardápio
+      </button>
+      <button class="nav-btn" data-tab="tab-cart" onclick="switchTab(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Carrinho
+        <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-orders" onclick="switchTab(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Meus Pedidos
+      </button>
+      <button class="nav-btn" data-tab="tab-profile" onclick="switchTab(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Perfil
+      </button>
+    </nav>
+    <button class="btn-logout">Sair</button>
+  </header>
+
+  <!-- ============ TAB: CARDÁPIO ============ -->
+  <div class="tab-content active" id="tab-menu">
+    <div class="menu-hero">
+      <div class="menu-hero-bg"></div>
+      <div class="menu-hero-overlay"></div>
+      <div class="menu-hero-text">
+        <div class="hero-greeting" id="hero-greeting">Olá! 👋</div>
+        <h2 class="hero-title">O que você quer<br/>pedir hoje?</h2>
+      </div>
+    </div>
+
+    <!-- Filtro de categorias -->
+    <div class="category-bar" id="category-bar">
+      <button class="cat-pill active" onclick="filterCategory(this,'')">Todos</button>
+    </div>
+
+    <!-- Grid de itens -->
+    <div class="menu-grid" id="menu-grid">
+      <div class="loading-msg">Carregando cardápio…</div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: CARRINHO ============ -->
+  <div class="tab-content" id="tab-cart">
+    <div class="tab-header"><h2 class="tab-title">🛒 Seu Carrinho</h2></div>
+    <div class="cart-wrap">
+      <div id="cart-items-list"></div>
+      <div class="cart-footer" id="cart-footer" style="display:none">
+        <div class="cart-total-row">
+          <span>Total</span>
+          <span class="cart-total-val" id="cart-total-val">R$ 0,00</span>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label>Endereço de entrega</label>
+          <div class="input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+            <input type="text" id="cart-address" placeholder="Rua, número, bairro, cidade"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Observações (opcional)</label>
+          <div class="input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <input type="text" id="cart-note" placeholder="Sem cebola, ponto da carne, etc."/>
+          </div>
+        </div>
+        <button class="btn-primary" id="btn-checkout" onclick="checkout()">Fazer Pedido 🚀</button>
+      </div>
+      <div class="cart-empty" id="cart-empty">
+        <div class="empty-icon">🛒</div>
+        <div class="empty-title">Carrinho vazio</div>
+        <div class="empty-sub">Adicione itens do cardápio</div>
+        <button class="btn-secondary" onclick="switchTabById('tab-menu')">Ver Cardápio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: MEUS PEDIDOS ============ -->
+  <div class="tab-content" id="tab-orders">
+    <div class="tab-header">
+      <h2 class="tab-title">📋 Meus Pedidos</h2>
+      <button class="btn-secondary btn-sm" onclick="loadMyOrders()">↻ Atualizar</button>
+    </div>
+    <div id="orders-list"><div class="loading-msg">Carregando…</div></div>
+  </div>
+
+  <!-- ============ TAB: PERFIL ============ -->
+  <div class="tab-content" id="tab-profile">
+    <div class="tab-header"><h2 class="tab-title">👤 Perfil</h2></div>
+    <div class="profile-card">
+      <input type="file" id="avatar-input" accept="image/*" style="display:none"/>
+      <div class="profile-avatar-wrap" onclick="document.getElementById('avatar-input').click()" title="Clique para trocar a foto">
+        <div class="profile-avatar" id="profile-avatar">?</div>
+        <div class="avatar-edit-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+      </div>
+      <div class="profile-name" id="profile-name">—</div>
+      <div class="profile-phone" id="profile-phone">—</div>
+      <div class="info-grid" style="margin-top:20px;margin-bottom:20px">
+        <div class="info-block"><div class="info-label">Membro desde</div><div class="info-value" id="profile-created">—</div></div>
+        <div class="info-block"><div class="info-label">Último acesso</div><div class="info-value" id="profile-last">—</div></div>
+      </div>
+
+      <!-- Formulário de edição -->
+      <div class="edit-section">
+        <div class="edit-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar dados cadastrais
+        </div>
+        <form id="form-edit-profile" novalidate>
+          <div class="field">
+            <label>Nome Completo</label>
+            <div class="input-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="edit-name" name="name" placeholder="Seu nome completo" required/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Celular</label>
+            <div class="input-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              <input type="tel" id="edit-phone" name="phone" class="phone-input" placeholder="(11) 99999-9999" required/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Endereço</label>
+            <div class="input-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+              <input type="text" id="edit-address" name="address" placeholder="Rua, número, bairro"/>
+            </div>
+          </div>
+
+          <div class="edit-section-title" style="margin-top:16px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Trocar senha <span style="font-weight:400;color:var(--muted)">(opcional)</span>
+          </div>
+          <div class="field">
+            <label>Senha atual</label>
+            <div class="input-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="edit-curr-pass" name="current_password" placeholder="Deixe em branco para não alterar"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Nova senha</label>
+            <div class="input-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="edit-new-pass" name="new_password" placeholder="Mínimo 6 caracteres"/>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-save-profile" class="btn-primary" style="margin-top:8px">Salvar Alterações</button>
+        </form>
+      </div>
+
+      <button class="btn-logout" style="width:100%;padding:12px;margin-top:16px;font-size:0.92rem">Encerrar Sessão</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== PAINEL ADMIN ===================== -->
+<div class="page app-page" id="page-admin">
+  <header class="app-header">
+    <div class="app-logo">
+      <img src="img/img-1.jpeg" alt="Logo" class="app-logo-img"/>
+      <span class="app-logo-text">Admin</span>
+    </div>
+    <nav class="app-nav">
+      <button class="nav-btn active" data-tab="atab-orders" onclick="switchAdminTab(this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Pedidos
+      </button>
+      <button class="nav-btn" data-tab="atab-users" onclick="switchAdminTab(this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Usuários
+      </button>
+      <button class="nav-btn" data-tab="atab-catalog" onclick="switchAdminTab(this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        Cardápio
+      </button>
+      <button class="nav-btn" data-tab="atab-entregadores" onclick="switchAdminTab(this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Entregadores
+      </button>
+    </nav>
+    <button id="btn-toggle-sound" class="btn-sound" onclick="toggleSound()" title="Ativar/desativar alerta sonoro de novos pedidos">🔔 Som: ON</button>
+    <button class="btn-logout">Sair</button>
+  </header>
+
+  <!-- Pedidos Admin -->
+  <div class="tab-content active admin-body" id="atab-orders">
+    <div class="admin-stats" id="admin-stats-row"></div>
+    <div class="tab-header">
+      <h2 class="tab-title">Todos os Pedidos</h2>
+      <button class="btn-secondary btn-sm" onclick="loadAdminOrders()">↻ Atualizar</button>
+    </div>
+    <div id="admin-orders-list"><div class="loading-msg">Carregando…</div></div>
+  </div>
+
+  <!-- Usuários Admin -->
+  <div class="tab-content admin-body" id="atab-users">
+    <div class="tab-header">
+      <h2 class="tab-title">Usuários Cadastrados</h2>
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="admin-search" placeholder="Buscar…" oninput="filterAdminUsers(this.value)"/>
+      </div>
+    </div>
+    <div id="admin-users-wrap">
+      <div class="table-wrap">
+        <table><thead><tr><th>Usuário</th><th>Celular</th><th>Endereço</th><th>Cadastro</th><th>Último login</th><th>Ações</th></tr></thead>
+        <tbody id="users-tbody"><tr><td colspan="6" class="empty-row">Carregando…</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cardápio Admin -->
+  <div class="tab-content admin-body" id="atab-catalog">
+    <div class="tab-header">
+      <h2 class="tab-title">Gerenciar Cardápio</h2>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Item</th><th>Categoria</th><th>Preço</th><th>Status</th><th></th></tr></thead>
+      <tbody id="catalog-tbody"><tr><td colspan="5" class="empty-row">Carregando…</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <!-- Entregadores Admin -->
+  <div class="tab-content admin-body" id="atab-entregadores">
+    <div class="tab-header">
+      <h2 class="tab-title">Entregadores</h2>
+      <button class="btn-secondary btn-sm" onclick="loadEntregadores()">↻ Atualizar</button>
+    </div>
+    <!-- Formulário de cadastro -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;max-width:700px">
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px">Novo Entregador</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field" style="margin-bottom:0">
+          <label>Nome Completo</label>
+          <div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="ent-name" placeholder="Nome completo"/></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Celular</label>
+          <div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <input type="tel" id="ent-phone" class="phone-input" placeholder="(11) 99999-9999"/></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>E-mail</label>
+          <div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          <input type="email" id="ent-email" placeholder="email@exemplo.com"/></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>CPF</label>
+          <div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/></svg>
+          <input type="text" id="ent-cpf" placeholder="000.000.000-00" maxlength="14"/></div>
+        </div>
+        <div class="field" style="margin-bottom:0;grid-column:span 2">
+          <label>Endereço</label>
+          <div class="input-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+          <input type="text" id="ent-address" placeholder="Rua, número, bairro"/></div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-save-entregador" onclick="saveEntregador()" style="margin-top:16px;width:auto;padding:11px 28px">Cadastrar Entregador</button>
+    </div>
+    <!-- Tabela de entregadores -->
+    <div class="table-wrap">
+      <table><thead><tr><th>Nome</th><th>Celular</th><th>E-mail</th><th>CPF</th><th>Endereço</th><th>Cadastro</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="entregadores-tbody"><tr><td colspan="8" class="empty-row">Carregando…</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: DETALHES DO USUÁRIO ===================== -->
+<div class="modal-overlay" id="modal-user" onclick="closeUserModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-avatar" id="modal-avatar">?</div>
+      <div>
+        <div class="modal-name" id="modal-name">—</div>
+        <div class="modal-sub" id="modal-phone">—</div>
+      </div>
+      <button class="modal-close" onclick="closeUserModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-row"><span class="modal-label">📍 Endereço</span><span class="modal-val" id="modal-address">—</span></div>
+      <div class="modal-row"><span class="modal-label">📅 Cadastro</span><span class="modal-val" id="modal-created">—</span></div>
+      <div class="modal-row"><span class="modal-label">🕐 Último login</span><span class="modal-val" id="modal-last">—</span></div>
+      <div class="modal-divider"></div>
+      <div class="modal-section-title">Pedidos do usuário</div>
+      <div id="modal-orders"><div class="loading-msg" style="padding:20px">Carregando…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== LIGHTBOX IMAGEM DO ITEM ===================== -->
+<div class="modal-overlay" id="img-lightbox" onclick="closeItemImage(event)">
+  <div class="lb-box">
+    <div class="lb-header">
+      <span class="lb-title" id="lb-title"></span>
+      <button class="modal-close" onclick="document.getElementById('img-lightbox').classList.remove('open')">✕</button>
+    </div>
+    <div class="lb-body">
+      <img id="lb-img" src="" alt="" class="lb-img"/>
+      <div id="lb-no-img" style="display:none" class="lb-no-img">
+        <div style="font-size:3rem">🍽️</div>
+        <div>Imagem não encontrada</div>
+        <div style="font-size:.75rem;margin-top:6px;opacity:.6">Coloque a imagem em <code>/img/</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: TOKEN DE ENTREGA ===================== -->
+<div class="modal-overlay" id="delivery-token-modal" onclick="if(event.target===this)closeDeliveryTokenModal()">
+  <div class="modal-box dtoken-box">
+    <div class="dtoken-header">
+      <div class="dtoken-icon">🔑</div>
+      <div class="dtoken-title">Pedido realizado!</div>
+      <div class="dtoken-subtitle">Pedido <strong id="dtoken-order-id">#—</strong> confirmado</div>
+    </div>
+    <div class="dtoken-body">
+      <p class="dtoken-instruction">
+        Mostre este código ao entregador na hora da entrega para confirmar que é você.
+      </p>
+      <div class="dtoken-digits-wrap">
+        <div class="dtoken-digits" id="dtoken-digits">
+          <span class="dtoken-digit">—</span>
+        </div>
+        <div class="dtoken-label-bottom">Código de entrega</div>
+      </div>
+      <p class="dtoken-tip">💡 Você pode consultar este código a qualquer momento em <strong>Meus Pedidos</strong>.</p>
+    </div>
+    <button class="btn-primary dtoken-btn" onclick="closeDeliveryTokenModal()">Entendido — Ver meus pedidos</button>
+  </div>
+</div>
+
+<!-- ===================== MODAL: ENTREGADOR ESCALADO ===================== -->
+<div class="modal-overlay" id="modal-entregador" onclick="if(event.target===this)closeEntregadorModal()">
+  <div class="modal-box ent-modal-box">
+    <div class="modal-header">
+      <div class="modal-avatar" style="background:linear-gradient(135deg,#5ec97e,#3aaf60);font-size:1.4rem">🛵</div>
+      <div>
+        <div class="modal-name">Entregador Escalado</div>
+        <div class="modal-sub">Pedido <strong id="ent-modal-order">#—</strong> está pronto</div>
+      </div>
+      <button class="modal-close" onclick="closeEntregadorModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-row"><span class="modal-label">👤 Nome</span><span class="modal-val" id="ent-modal-name">—</span></div>
+      <div class="modal-row"><span class="modal-label">📱 Celular</span><span class="modal-val" id="ent-modal-phone">—</span></div>
+      <div class="modal-row"><span class="modal-label">✉️ E-mail</span><span class="modal-val" id="ent-modal-email">—</span></div>
+      <div style="background:rgba(94,201,126,.08);border:1px solid rgba(94,201,126,.2);border-radius:10px;padding:12px 14px;margin-top:8px;font-size:.82rem;color:var(--accent3)">
+        🔄 Este entregador foi selecionado automaticamente pela fila. O próximo pedido será atribuído ao seguinte da lista.
+      </div>
+    </div>
+    <div style="padding:0 22px 20px">
+      <button class="btn-primary" onclick="closeEntregadorModal()" style="background:linear-gradient(135deg,#5ec97e,#3aaf60);box-shadow:0 4px 20px rgba(94,201,126,.35)">Entendido ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
